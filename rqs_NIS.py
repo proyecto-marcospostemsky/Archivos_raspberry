@@ -5,35 +5,39 @@ import paho.mqtt.client as mqtt
 
 #Variables locales al archivo
 ref="San Luis Norte"
-broker="000"
-
+broker="0"*3
 PyLora.init()
 PyLora.set_frequency(434000000)
 client=mqtt.Client(client_id='raspberry',clean_session=False)
 client.connect("localhost",1883,60)
+
+
 while True:
-    
     PyLora.receive()   # put into receive mode
     while not PyLora.packet_available():
         # wait for a package
         time.sleep(0)
     rec = PyLora.receive_packet()
-    rec_rec=rec[4:len(rec)]
-    print(rec_rec)
+
+    #Verifica que rec no esté vacio, para evitar errores de Types
+    if rec is not None:
+        rec_rec=rec[4:len(rec)]
 ##    rec_rec=input()
+        print(rec_rec) #Muestro el dato recibido
+    
     if(rec_rec=="RQS NIS"):
         #Abre archivo, y lee cada una de las líneas
         
         file_direcciones=open("mod_address.txt","r+")
         lista_NIS=file_direcciones.readlines()
         #El archivo se encuentra vacio?
-        if len(lista_NIS)<2:
+        if len(lista_NIS)<1:
             grabar_archivo=broker+"0"*7+"-San Luis Norte"
             file_direcciones.write(grabar_archivo)
             NIS=grabar_archivo[0:10]
         else:
     ##        Toma ultimo NIS del archivo de texto, y se le
-    ##        suma uno (al num de modulo) el num de broker se mantiene
+    ##        suma uno (al num de modulo) el num de broker se
             ult_linea=str(lista_NIS[len(lista_NIS)-1])
             div_ult_linea=ult_linea.split("-")
             num=int(div_ult_linea[0][3:10])+1
@@ -42,14 +46,20 @@ while True:
             
         #Guardo archivo con NIS  
         file_direcciones.close()
-        
+
+        time.sleep(0.05)
         envio_OK=0
+##        print(NIS)
+        #PyLora.send_packet(NIS)
+    
+
+        
         while(envio_OK==0):
             #Se debe definir un tiempo de espera por si falla el envio
             #para volver a reenviar el NIS
             
             #Envío del NIS al medidor
-            PyLora.send_packet("0123456789")
+            PyLora.send_packet(NIS)
                       
             
             #Espero respuesta
@@ -58,15 +68,15 @@ while True:
                 # wait for a package
                 time.sleep(0)
             rec = PyLora.receive_packet()
-            rec_rec=rec[4:len(rec)]
-            
-            envio_OK=1
+
+            if rec is not None:
+                rec_rec=rec[4:len(rec)]
+                print(rec_rec)
             
             if "OK-"+NIS==rec_rec:
-                print("Evento terminado correctamente")
+##                print("Evento terminado correctamente")
                 envio_OK=1
-            else:
-                print("Envío incorrecto")
+            
 
 
 
