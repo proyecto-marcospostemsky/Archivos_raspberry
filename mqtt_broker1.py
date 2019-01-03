@@ -16,12 +16,14 @@ deviceType="Gateway"
 deviceID="broker-001"
 topic = "iot-2/evt/status/fmt/json"
 rootCert = "certs/messaging.pem"
+##SSL.com_EV_Root_Certification_Authority_ECC.pem
 clientID = "d:" + org + ":" + deviceType + ":" + deviceID
 
 client = mqtt.Client(clientID)
 
 client.username_pw_set('use-token-auth', secret)
-client.connect(org+'.messaging.internetofthings.ibmcloud.com', 1883, 60)
+client.tls_set(ca_certs=rootCert, certfile=None, keyfile=None, cert_reqs=ssl.CERT_REQUIRED, tls_version=ssl.PROTOCOL_SSLv23)
+client.connect(org+'.messaging.internetofthings.ibmcloud.com', 8883, 60)
 
 client.loop()
 
