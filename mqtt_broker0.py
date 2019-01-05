@@ -1,16 +1,11 @@
+# -*- coding: utf-8 -*-
+
+import PyLora
 import json
 import paho.mqtt.client as mqtt
 import ssl
-import serial
 import time
 import decimal
-
-nis="0000000003"
-rec="430/350/245/40/52/"
-
-recdiv=rec.split("/")
-
-
 
 
 org="upgyih"
@@ -31,8 +26,13 @@ client.tls_set(ca_certs=rootCert, certfile=None, keyfile=None, cert_reqs=ssl.CER
 client.connect(org+'.messaging.internetofthings.ibmcloud.com', 8883, 60)
 
 client.loop()
+PyLora.init()
+PyLora.set_frequency(434000000)
+
+
 
 contador=0
+nis="0000000015"
 ##while(contador<2):
 ##    client.publish(topic, json.dumps(publicar))
 ##    contador=contador+1
@@ -40,31 +40,42 @@ contador=0
 ##
 date=10
 suma=200.0
-while(contador<15):
+flag=1
+while(flag):
+    PyLora.send_packet("INFO-"+nis)
+    PyLora.receive()   # put into receive mode
+    while not PyLora.packet_available():
+        # wait for a package
+        time.sleep(0)
+    rec = PyLora.receive_packet()
+    
+  
+    rec_rec=rec[4:len(rec)]
+    print(rec_rec)
+    
+    recdiv=rec_rec.split(";")
+    
     publicar={
     "nis":"b"+nis[0:3]+"m"+nis[3:10],
-    "energia_kwh":float(recdiv[0])+suma,
+    "energia_kwh":float(recdiv[0]),
     "energia_wh":float(recdiv[1]),
     "tension_rms":float(recdiv[2]),
     "corriente_rms":float(recdiv[3]),
     "factor_potencia":float(recdiv[4]),
-    "date": "2018-10-"+str(date)
+    "date": str(recdiv[7])+"-"+str(recdiv[6])+"-"+str(recdiv[5])
     }
-    date=date+1
-    suma=suma+50
-    l=''
-    msg={}
-    s = deviceID+" "+str(contador)  
-    msg = json.JSONEncoder().encode(publicar)
-    contador=contador+1
-    print(msg)
+    
+    print(publicar)
+##    msg={}
+##    msg = json.JSONEncoder().encode(publicar)
+##    contador=contador+1
+##    print(msg)
     try:
          client.publish(topic, json.dumps(publicar),qos=1)
     except ConnectionException as e:
           print(e)
     print("published")
-    time.sleep(2)
-
+    flag=0
 
 #payload = "ojala funque"
 #client.publish('iot-2/evt/test/fmt/json', json.dumps(payload))
