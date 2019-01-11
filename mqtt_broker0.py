@@ -48,40 +48,53 @@ while(flag):
     print(enviar)
     PyLora.send_packet(enviar)
     PyLora.receive()   # put into receive mode
+    time_out=0
+    flag_rec=2
+    
     while not PyLora.packet_available():
         # wait for a package
-        time.sleep(0)
-    rec = PyLora.receive_packet()
+        flag_rec=1
+        time.sleep(0.5)
+        time_out+=1
+        if time_out>=6:
+            flag_rec=0
+            break
+        
+    if flag_rec==0:
+        print("time out activado")
     
-  
-    rec_rec=rec[4:len(rec)]
-    print(rec_rec)
-    
-    recdiv=rec_rec.split(";")
-    
-    publicar={
-    "nis":"b"+nis[0:3]+"m"+nis[3:10],
-    "energia_kwh":float(recdiv[0]),
-    "energia_wh":float(recdiv[1]),
-    "tension_rms":float(recdiv[2]),
-    "corriente_rms":float(recdiv[3]),
-    "factor_potencia":float(recdiv[4]),
-    "date": str(recdiv[7])+"-"+str(recdiv[6])+"-"+str(recdiv[5])
-    }
-    
-    print(publicar)
-##    msg={}
-##    msg = json.JSONEncoder().encode(publicar)
-##    contador=contador+1
-##    print(msg)
-##    try:
-##         client.publish(topic, json.dumps(publicar),qos=1)
-##    except ConnectionException as e:
-##          print(e)
-##    print("published")
+    if flag_rec==1:
+        rec = PyLora.receive_packet()
+        
+      
+        rec_rec=rec[4:len(rec)]
+        print(rec_rec)
+        
+        recdiv=rec_rec.split(";")
+        
+        publicar={
+        "nis":"b"+nis[0:3]+"m"+nis[3:10],
+        "energia_kwh":float(recdiv[0]),
+        "energia_wh":float(recdiv[1]),
+        "tension_rms":float(recdiv[2]),
+        "corriente_rms":float(recdiv[3]),
+        "factor_potencia":float(recdiv[4]),
+        "date": str(recdiv[7])+"-"+str(recdiv[6])+"-"+str(recdiv[5])
+        }
+        
+        print(publicar)
+    ##    msg={}
+    ##    msg = json.JSONEncoder().encode(publicar)
+    ##    contador=contador+1
+    ##    print(msg)
+    ##    try:
+    ##         client.publish(topic, json.dumps(publicar),qos=1)
+    ##    except ConnectionException as e:
+    ##          print(e)
+    ##    print("published")
     flag=0
 
-#payload = "ojala funque"
-#client.publish('iot-2/evt/test/fmt/json', json.dumps(payload))
+    #payload = "ojala funque"
+    #client.publish('iot-2/evt/test/fmt/json', json.dumps(payload))
 
-#client.disconnect()
+    #client.disconnect()
