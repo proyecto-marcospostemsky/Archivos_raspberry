@@ -11,10 +11,10 @@ def rec_lora(timeout=3):
     flag="noMsg"
     time_out=0
     PyLora.receive()   # put into receive mode
-    msg=None
+    msg=None    
     while not PyLora.packet_available():
         # wait for a package
-        flag_rec="msg"
+        flag="msg"
         time.sleep(0.25)
         time_out+=1
         if time_out>=int(timeout*4):
@@ -51,7 +51,7 @@ PyLora.set_frequency(434000000)
 
 
 contador=0
-nis="0000000231"
+nis="0000000225"
 ##while(contador<2):
 ##    client.publish(topic, json.dumps(publicar))
 ##    contador=contador+1
@@ -67,14 +67,15 @@ while(flag):
 
     (rec,flag_rec)=rec_lora(10)
 
+    if flag_rec=="noMsg":
+        print(flag_rec)
         
     if flag_rec=="tmrout":
         print("time out activado")
     
     if flag_rec=="msg":
         
-        
-        try:
+        try:                       
             rec_rec=rec[4:len(rec)]
             print(rec_rec)
             
@@ -82,7 +83,7 @@ while(flag):
             
             publicar={
             "nis":"b"+nis[0:3]+"m"+nis[3:10],
-            "energia_kwh":float(recdiv[0]),
+            "energia_kwh":float(recdiv[0]), #0
             "energia_wh":float(recdiv[1]),
             "tension_rms":float(recdiv[2]),
             "corriente_rms":float(recdiv[3]),
@@ -91,9 +92,8 @@ while(flag):
             }
             
             print(publicar)
-        except ValueError:
-            rec=""
-        
+        except IndexError or ValueError:
+            print("mensaje incorrecto")
     ##    msg={}
     ##    msg = json.JSONEncoder().encode(publicar)
     ##    contador=contador+1
