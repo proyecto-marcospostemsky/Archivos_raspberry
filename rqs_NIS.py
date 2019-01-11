@@ -23,9 +23,9 @@ while True:
     if rec is not None:
         rec_rec=rec[4:len(rec)]
 ##    rec_rec=input()
-        print(rec_rec) #Muestro el dato recibido
-    
-    if(rec_rec=="RQS NIS"):
+        print(rec) #Muestro el dato recibido
+        print(len(rec))
+    if(rec=="RQS NIS"):
         #Abre archivo, y lee cada una de las líneas
         
         file_direcciones=open("mod_address.txt","r+")
@@ -59,7 +59,7 @@ while True:
             #para volver a reenviar el NIS
             
             #Envío del NIS al medidor
-            PyLora.send_packet(NIS)
+            PyLora.send_packet("FFFFFFFFFF"+NIS)
                       
             
             #Espero respuesta
@@ -71,9 +71,10 @@ while True:
 
             if rec is not None:
                 rec_rec=rec[4:len(rec)]
-                print(rec_rec)
+                print(rec)
+                print(len(rec))
             
-            if "OK-"+NIS==rec_rec:
+            if "OK-"+NIS==rec:
 ##                print("Evento terminado correctamente")
                 envio_OK=1
             

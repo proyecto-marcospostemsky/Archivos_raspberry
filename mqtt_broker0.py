@@ -25,6 +25,8 @@ client.username_pw_set('use-token-auth', secret)
 client.tls_set(ca_certs=rootCert, certfile=None, keyfile=None, cert_reqs=ssl.CERT_REQUIRED, tls_version=ssl.PROTOCOL_SSLv23)
 client.connect(org+'.messaging.internetofthings.ibmcloud.com', 8883, 60)
 
+print("Conectado MQTT")
+
 client.loop()
 PyLora.init()
 PyLora.set_frequency(434000000)
@@ -32,7 +34,7 @@ PyLora.set_frequency(434000000)
 
 
 contador=0
-nis="0000000015"
+nis="0000000223"
 ##while(contador<2):
 ##    client.publish(topic, json.dumps(publicar))
 ##    contador=contador+1
@@ -42,7 +44,9 @@ date=10
 suma=200.0
 flag=1
 while(flag):
-    PyLora.send_packet("INFO-"+nis)
+    enviar=nis+"INFO-"+nis
+    print(enviar)
+    PyLora.send_packet(enviar)
     PyLora.receive()   # put into receive mode
     while not PyLora.packet_available():
         # wait for a package
@@ -70,11 +74,11 @@ while(flag):
 ##    msg = json.JSONEncoder().encode(publicar)
 ##    contador=contador+1
 ##    print(msg)
-    try:
-         client.publish(topic, json.dumps(publicar),qos=1)
-    except ConnectionException as e:
-          print(e)
-    print("published")
+##    try:
+##         client.publish(topic, json.dumps(publicar),qos=1)
+##    except ConnectionException as e:
+##          print(e)
+##    print("published")
     flag=0
 
 #payload = "ojala funque"
