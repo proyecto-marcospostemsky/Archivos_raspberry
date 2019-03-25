@@ -51,7 +51,7 @@ PyLora.set_frequency(434000000)
 
 
 contador=0
-nis="0000000225"
+nis="0000000243"
 ##while(contador<2):
 ##    client.publish(topic, json.dumps(publicar))
 ##    contador=contador+1
@@ -77,9 +77,9 @@ while(flag):
         
         try:                       
             rec_rec=rec[4:len(rec)]
-            print(rec_rec)
+            print(rec)
             
-            recdiv=rec_rec.split(";")
+            recdiv=rec.split(";")
             
             publicar={
             "nis":"b"+nis[0:3]+"m"+nis[3:10],
@@ -88,7 +88,7 @@ while(flag):
             "tension_rms":float(recdiv[2]),
             "corriente_rms":float(recdiv[3]),
             "factor_potencia":float(recdiv[4]),
-            "date": str(recdiv[7])+"-"+str(recdiv[6])+"-"+str(recdiv[5])
+            "date": str(recdiv[7])+"-"+"0"*(2-len(str(recdiv[6])))+str(recdiv[6])+"-"+"0"*(2-len(str(recdiv[5])))+str(recdiv[5])
             }
             
             print(publicar)

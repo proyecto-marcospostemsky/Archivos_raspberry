@@ -18,7 +18,7 @@ while True:
         # wait for a package
         time.sleep(0)
     rec = PyLora.receive_packet()
-
+    print(rec)
     #Verifica que rec no esté vacio, para evitar errores de Types
     if rec is not None:
         rec_rec=rec[4:len(rec)]
