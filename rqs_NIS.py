@@ -11,8 +11,10 @@ PyLora.set_frequency(434000000)
 client=mqtt.Client(client_id='raspberry',clean_session=False)
 client.connect("localhost",1883,60)
 
+print("Para grabar el identificador NIS en el dispositivo siga los siguientes pasos: \n")
+print(" 1. Ingrese el NIS que se desee grabar. \n")
+print(" 2. Energice el medidor y espere el mensaje de confirmación. \n")
 
-while True:
     PyLora.receive()   # put into receive mode
     while not PyLora.packet_available():
         # wait for a package
@@ -22,7 +24,6 @@ while True:
     #Verifica que rec no esté vacio, para evitar errores de Types
     if rec is not None:
         rec_rec=rec[4:len(rec)]
-##    rec_rec=input()
         print(rec) #Muestro el dato recibido
         print(len(rec))
     if(rec=="RQS NIS"):
