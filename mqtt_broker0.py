@@ -52,10 +52,16 @@ PyLora.set_frequency(434000000)
 
 contador=0
 nis="0000000243"
-##while(contador<2):
-##    client.publish(topic, json.dumps(publicar))
-##    contador=contador+1
-##    time.sleep(1)
+
+#Agregar la lectura del archivo "mod_address.txt", donde se decidió que la información se recaba cada 15 días,
+# es decir este programa debe leer cada nis, pedir su información con un total de tres intentos, y por último,
+#esperar 15 días para volver a realizar esta tarea.
+
+
+
+
+
+
 ##
 date=10
 suma=200.0
