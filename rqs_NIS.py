@@ -43,7 +43,7 @@ while(len(NIS)!=10 or nis_correcto==0):
                 break
 
         #Se abre el archivo donde se encuentran los NIS, para verificar que no esté en uso.
-        nis_file=open("mod_address.txt","r") #abro archivo con los nis
+        nis_file=open("mod_address.log","r") #abro archivo con los nis
         lines=nis_file.read() #Lee todas las lineas del archivo
         nis_file.close()
         if nis_correcto==1 and lines.find(NIS)!= -1:
@@ -108,9 +108,9 @@ if(rec=="RQS NIS"):
             envio_OK=1
 
 
-#Si se confirma que el medidor recibio el valor configurado, se guarda el NIS en el archivo "mod_address.txt"           
+#Si se confirma que el medidor recibio el valor configurado, se guarda el NIS en el archivo "mod_address.log"           
 if(envio_OK==1):
-    nis_file=open("mod_address.txt","r+")
+    nis_file=open("mod_address.log","r+")
     lines=nis_file.read() #Lee todas las lineas del archivo
     nis_file.writelines("\n"+NIS+"-"+referencia) #Guardo nuevo NIS en archivo
     nis_file.close()

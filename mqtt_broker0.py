@@ -51,15 +51,10 @@ PyLora.set_frequency(434000000)
 
 
 contador=0
-nis="0000000243"
 
-#Agregar la lectura del archivo "mod_address.txt", donde se decidió que la información se recaba cada 15 días,
+
+#Agregar la lectura del archivo "mod_address.log", donde se decidió que la información se recaba cada 15 días,
 # es decir este programa debe leer cada nis, pedir su información con un total de tres intentos, y por último,
-#esperar 15 días para volver a realizar esta tarea.
-
-
-
-
 
 
 ##
@@ -67,6 +62,26 @@ date=10
 suma=200.0
 flag=1
 while(flag):
+    #Lectura de todos los nis registrados para el broker
+    nis_file=open("mod_address.log","r")
+    all_nis=nis_file.readlines()
+    nis_file.close()
+
+    cant_nis=len(all_nis)
+#Lectura del ultimo nis del cual se recaban los datos
+    last_file=open("last_nis.log","r")
+    ult_nis=last_file.readlines()
+    last_file.close()
+    ult_nis=ult_nis[0].split("=")
+    ult_nis=int(ult_nis[1])
+
+
+    nis=all_nis[ult_nis].split("-")
+    nis=nis[0]
+    print(nis)
+
+
+
     enviar=nis+"INFO-"+nis
     print(enviar)
     PyLora.send_packet(enviar)
@@ -100,18 +115,30 @@ while(flag):
             print(publicar)
         except IndexError or ValueError:
             print("mensaje incorrecto")
-    ##    msg={}
-    ##    msg = json.JSONEncoder().encode(publicar)
-    ##    contador=contador+1
-    ##    print(msg)
-    ##    try:
-    ##         client.publish(topic, json.dumps(publicar),qos=1)
-    ##    except ConnectionException as e:
-    ##          print(e)
-    ##    print("published")
-    flag=0
 
-    #payload = "ojala funque"
-    #client.publish('iot-2/evt/test/fmt/json', json.dumps(payload))
+#Control para grabar el último nis registrado por línea de documento, no por por numeración
+    if(ult_nis+1!=cant_nis):
+        #Se guarda el nis siguiente a leer
+        last_file=open("last_nis.log","w")
+        ult_nis=last_file.write("num_send="+str(ult_nis+1))
+        last_file.close()
+    elif(ult_nis+1==cant_nis): 
+        #Se guarda el nis siguiente a leer
+        last_file=open("last_nis.log","w")
+        ult_nis=last_file.write("num_send=0")
+        last_file.close()
+        break
+    time.sleep(1)
 
-    #client.disconnect()
+
+
+
+
+
+
+
+
+
+
+
+   
