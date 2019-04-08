@@ -6,7 +6,7 @@ import paho.mqtt.client as mqtt
 #Variables locales al archivo
 ref="San Luis Norte"
 broker="0"*3
-nis_rqs=FFFFFFFFFE
+nis_rqs="FFFFFFFFFE"
 PyLora.init()
 PyLora.set_frequency(434000000)
 client=mqtt.Client(client_id='raspberry',clean_session=False)
@@ -16,7 +16,7 @@ client.connect("localhost",1883,60)
 #Comienza por pedir el ingreso del NIS al usuario, verificando la disponibilidad del mismo.
 
 print("Para grabar el identificador NIS en el dispositivo siga los siguientes pasos: \n")
-print("   1. Ingrese el NIS que se desee grabar. \n")
+print("   1. Ingrese el NIS que se desee grabar entre comillas (\"NIS\"). \n")
 print("   2. Energice el medidor y espere el mensaje de confirmación. \n")
 
 #Variables de control
@@ -29,7 +29,10 @@ control_caract=1
 #Loop para corroborar que el NIS que ingresa el usuario es válido.
 while(len(NIS)!=10 or nis_correcto==0):
     nis_correcto=1
-    NIS= input("Ingrese el nuevo valor de NIS: ")
+    try:
+        NIS= str(input("Ingrese el nuevo valor de NIS: "))
+    except:
+        print("\nEl NIS ingresado contiene caracteres prohibidos")        
     if(len(NIS)!=10):
         print("\nEl identificador NIS no tiene el largo correcto\n")
         nis_correcto=0
@@ -58,8 +61,13 @@ while(len(NIS)!=10 or nis_correcto==0):
         #Si hasta este punto de control el NIS ha sido correcto, se pide una refencia 
         #con la cual guardar la información, luego de grabar en el medidor.
         elif nis_correcto==1:
-            referencia=input("\nNIS disponible. Escriba una referencia: ")
-
+            ref_ok=0
+            while(ref_ok==0):
+                try:
+                    referencia=str(input("\nNIS disponible. Escriba una referencia, entre comillas (\"ref\"): "))
+                    ref_ok=1
+                except:
+                    print("\nReferencia contiene caracteres prohibidos. Recuerde las comillas.")
 
 print("\n Energice el medidor y espere el mensaje de confirmación.")
 
