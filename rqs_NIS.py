@@ -25,6 +25,7 @@ nis_correcto=0
 reservados={"FFFFFFFFFF","FFFFFFFFFE"}
 disp="0123456789ABCDEF"
 control_caract=1
+envio_OK=0
 
 #Loop para corroborar que el NIS que ingresa el usuario es válido.
 while(len(NIS)!=10 or nis_correcto==0):
@@ -74,17 +75,19 @@ print("\n Energice el medidor y espere el mensaje de confirmación.")
 
 
 #Se comienza por grabar el NIS del nuevo dispositivo.
-PyLora.receive()   # put into receive mode
-while not PyLora.packet_available():
-    # wait for a package
-    time.sleep(0)
-rec = PyLora.receive_packet()
-print(rec)
-#Verifica que rec no esté vacio, para evitar errores de Types
-if rec is not None:
-    rec_rec=rec[4:len(rec)]
-    print(rec) #Muestro el dato recibido
-    print(len(rec))
+print("recibiendo")
+while(1):
+    PyLora.receive()   # put into receive mode
+    while not PyLora.packet_available():
+        # wait for a package
+        time.sleep(0)
+    rec = PyLora.receive_packet()
+    print(str(rec))
+    #Verifica que rec no esté vacio, para evitar errores de Types
+    if rec is not None:
+        rec_rec=rec[4:len(rec)]
+        print(rec) #Muestro el dato recibido
+        print(len(rec))
 
 
 if(rec=="RQS NIS"):
