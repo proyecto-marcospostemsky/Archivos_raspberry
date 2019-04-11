@@ -86,38 +86,40 @@ while(1):
     #Verifica que rec no esté vacio, para evitar errores de Types
     if rec is not None:
         rec_rec=rec[4:len(rec)]
-        print(rec) #Muestro el dato recibido
-        print(len(rec))
+        print(rec_rec) #Muestro el dato recibido
+        print(len(rec_rec))
 
 
-if(rec=="RQS NIS"):
-    time.sleep(0.05)
-    envio_OK=0
+    if(rec_rec=="RQS NIS"):
+        time.sleep(0.05)
+        envio_OK=0
+        print("vamo")
 
-    while(envio_OK==0):
-        #Se debe definir un tiempo de espera por si falla el envio
-        #para volver a reenviar el NIS
-        
-        #Envío del NIS al medidor
-        PyLora.send_packet("FFFFFFFFFF"+NIS)
-                  
-        
-        #Espero respuesta
-        PyLora.receive()   # put into receive mode
-        while not PyLora.packet_available():
-            # wait for a package
-            time.sleep(0)
-        rec = PyLora.receive_packet()
+        while(envio_OK==0):
+            #Se debe definir un tiempo de espera por si falla el envio
+            #para volver a reenviar el NIS
+            
+            #Envío del NIS al medidor
+            print("Envía NIS")
+            PyLora.send_packet(NIS)
+            print("Envía NIS2")          
+            
+            #Espero respuesta
+            PyLora.receive()   # put into receive mode
+            while not PyLora.packet_available():
+                # wait for a package
+                time.sleep(0)
+            rec = PyLora.receive_packet()
 
-        if rec is not None:
-            rec_rec=rec[4:len(rec)]
-            print(rec)
-            print(len(rec))
-        
-        if "OK-"+NIS==rec:
-            print("Evento terminado correctamente")
-            envio_OK=1
-
+            if rec is not None:
+                rec_rec=rec[4:len(rec)]
+                print(rec_rec)
+                print(len(rec))
+            
+            if "OK-"+NIS==rec_rec:
+                print("Evento terminado correctamente")
+                envio_OK=1
+    break
 
 #Si se confirma que el medidor recibio el valor configurado, se guarda el NIS en el archivo "mod_address.log"           
 if(envio_OK==1):
