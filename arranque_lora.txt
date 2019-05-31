@@ -1,0 +1,3 @@
+@reboot sleep 45; /usr/bin/python /home/pi/Medidor_Energia/pedidoFECHA_info_broker.py
+10 * * * * /usr/bin/python /home/pi/Medidor_Energia/pedidoFECHA_info_broker.py # JOB_ID_2
+

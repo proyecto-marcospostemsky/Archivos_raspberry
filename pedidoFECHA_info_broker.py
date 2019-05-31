@@ -1,3 +1,4 @@
+#! /usr/bin/python
 # -*- coding: utf-8 -*-
 
 import PyLora
@@ -80,16 +81,18 @@ while(1):
 
     nis=all_nis[ult_nis].split("-")
     nis=nis[0]
-    print(nis)
+    print("NIS medidor actual: "+nis)
+
 
     #Dependiendo el valor de "flag", el programa seguirá intentando conseguir la información o no.
     flag=1
     count=0 #Se permitirá solo 3 intentos debido a cualquier error
     while(flag==1 and count<3):
-        print(count)
+        print("Numero de intento:"+str(count))
         fecha=datetime.now();
-        enviar=nis+"INFO-"+nis+"-"+str(fecha.day)+"-"+str(fecha.month)+"-"+str(fecha.year)
-        print(enviar)
+        anio=str(fecha.year)
+        enviar=nis+"INFO-"+nis+"-"+str(fecha.day)+"-"+str(fecha.month)+"-"+anio[2:4]+"-"
+        print("Envia mensaje a nodo: "+enviar)
         PyLora.send_packet(enviar)
         
         
@@ -107,42 +110,42 @@ while(1):
             
             try:                       
                 rec_rec=rec[4:len(rec)]
-                print(rec_rec)
+                print("Recepcion desde nodo:" + rec_rec)
                 
                 recdiv=rec_rec.split(";")
-                print(len(recdiv))
                 #Comprueba que el formado recibido es el correcto
                 #Si no lo fuese, se vuelve a pedir.
-                if(len(recdiv)==9): 
+                if(len(recdiv)==9 and recdiv[5]==anio and recdiv[6]==str(fecha.month) and recdiv[7]==str(fecha.day)): 
                     publicar={
                     "nis":"b"+nis[0:3]+"m"+nis[3:10],
-                    "energia_kwh":float(recdiv[0]), #0
+                    "energia_kwh": float(recdiv[0]), #0
                     "energia_wh":float(recdiv[1]),
                     "tension_rms":float(recdiv[2]),
                     "corriente_rms":float(recdiv[3]),
                     "factor_potencia":float(recdiv[4]),
-                    "date": str(recdiv[7])+"-"+"0"*(2-len(str(recdiv[6])))+str(recdiv[6])+"-"+"0"*(2-len(str(recdiv[5])))+str(recdiv[5])
+                    "date": str(recdiv[5])+"-"+"0"*(2-len(str(recdiv[6])))+str(recdiv[6])+"-"+"0"*(2-len(str(recdiv[7])))+str(recdiv[7])
                     }
                     
                     #crea un objeto para luego publicarlo a IBM cloud
                     msg={}
                     msg = json.JSONEncoder().encode(publicar)
-                    print(msg)
                     flag=0
                     
                     try:
                         client.publish(topic, json.dumps(publicar),qos=1)
+                        print("Mensaje a publicar en IBM Cloud: ")
                         print(publicar)
-                        lag=0
+                        flag=0
                     except ConnectionException as e:
                         print(e)
                         count=count+1
                 
 
             except:
-                print("mensaje incorrecto")
+                print("Mensaje incorrecto")
                 count=count+1 
-        
+
+    print("="*80)
 
     #Control para grabar el último nis registrado por línea de documento, no por por numeración
     if(ult_nis+1!=cant_nis):
