@@ -27,13 +27,13 @@ def rec_lora(timeout=3):
     return(msg,flag)
     
 
-org="upgyih"
+org="g4o2on"
 username = "use-token-auth"
-password ="iYNZNyidX_*dBmTRSu"
+password ="1793.Marcos"
 token="use-token-auth"
-secret="iYNZNyidX_*dBmTRSu" #secret de broker-000
+secret="1793.Marcos" #secret de broker-000
 deviceType="Gateway"
-deviceID="broker-000"
+deviceID="Broker-0"
 topic = "iot-2/evt/status/fmt/json"
 rootCert = None#"/home/pi/Medidor_Energia/certs/certifi2.pem"
 clientID = "d:" + org + ":" + deviceType + ":" + deviceID
