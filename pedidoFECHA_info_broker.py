@@ -87,7 +87,8 @@ while(1):
     #Dependiendo el valor de "flag", el programa seguirá intentando conseguir la información o no.
     flag=1
     count=0 #Se permitirá solo 3 intentos debido a cualquier error
-    while(flag==1 and count<3):
+    count_fatal_data=0
+    while(flag==1 and count<3 and count_fatal_data < 5):
         print("Numero de intento:"+str(count))
         fecha=datetime.now();
         anio=str(fecha.year)
@@ -103,7 +104,7 @@ while(1):
             count=count+1
             
         if flag_rec=="tmrout":
-            print("time out activado")
+            print("[ERROR] Timeout Activado")
             count=count+1
         
         if flag_rec=="msg":
@@ -139,12 +140,20 @@ while(1):
                     except ConnectionException as e:
                         print(e)
                         count=count+1
+                else:
+                    count_fatal_data = count_fatal_data + 1
+                    print("[ERROR] Mensaje con formato incorrecto")
+                
                 
 
             except:
-                print("Mensaje incorrecto")
+                print("[ERROR] Mensaje incorrecto")
                 count=count+1 
 
+    if (count >= 3 or count_fatal_data >= 5):
+        msje_error = "[ERROR] Problema con el medidor: " + nis + " dar aviso."
+        print(msje_error)
+        
     print("="*80)
 
     #Control para grabar el último nis registrado por línea de documento, no por por numeración
